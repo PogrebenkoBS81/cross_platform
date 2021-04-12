@@ -1,6 +1,6 @@
 package pogrebenko.lab3db.sqldatabase.database.core;
 
-import pogrebenko.lab3db.sqldatabase.common.abstraction.ICore;
+import pogrebenko.lab3db.sqldatabase.common.contract.ICore;
 import pogrebenko.loggerwrapper.LoggerWrapper;
 
 import java.sql.*;

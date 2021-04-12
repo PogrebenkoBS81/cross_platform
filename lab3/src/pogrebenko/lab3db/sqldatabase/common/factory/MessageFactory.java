@@ -1,6 +1,6 @@
 package pogrebenko.lab3db.sqldatabase.common.factory;
 
-import pogrebenko.lab3db.sqldatabase.common.abstraction.IMessageDB;
+import pogrebenko.lab3db.sqldatabase.common.contract.IMessageDB;
 import pogrebenko.lab3db.sqldatabase.database.mysql.message.MySQLMessage;
 import pogrebenko.loggerwrapper.LoggerWrapper;
 

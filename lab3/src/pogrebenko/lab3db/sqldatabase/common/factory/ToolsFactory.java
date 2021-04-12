@@ -1,6 +1,6 @@
 package pogrebenko.lab3db.sqldatabase.common.factory;
 
-import pogrebenko.lab3db.sqldatabase.common.abstraction.IToolsDB;
+import pogrebenko.lab3db.sqldatabase.common.contract.IToolsDB;
 import pogrebenko.lab3db.sqldatabase.database.mysql.tools.MySQLTools;
 import pogrebenko.loggerwrapper.LoggerWrapper;
 

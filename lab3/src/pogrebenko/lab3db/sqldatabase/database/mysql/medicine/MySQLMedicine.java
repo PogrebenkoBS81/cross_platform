@@ -2,7 +2,7 @@ package pogrebenko.lab3db.sqldatabase.database.mysql.medicine;
 
 import pogrebenko.lab3db.model.medicine.Medicine;
 import pogrebenko.lab3db.model.medicine.MedicineID;
-import pogrebenko.lab3db.sqldatabase.common.abstraction.IMedicineDB;
+import pogrebenko.lab3db.sqldatabase.common.contract.IMedicineDB;
 import pogrebenko.lab3db.sqldatabase.common.parser.MedicineParser;
 import pogrebenko.lab3db.sqldatabase.database.core.Core;
 import pogrebenko.loggerwrapper.LoggerWrapper;

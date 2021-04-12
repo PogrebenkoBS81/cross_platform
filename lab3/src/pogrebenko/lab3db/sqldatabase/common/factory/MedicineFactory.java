@@ -1,6 +1,6 @@
 package pogrebenko.lab3db.sqldatabase.common.factory;
 
-import pogrebenko.lab3db.sqldatabase.common.abstraction.IMedicineDB;
+import pogrebenko.lab3db.sqldatabase.common.contract.IMedicineDB;
 import pogrebenko.lab3db.sqldatabase.database.mysql.medicine.MySQLMedicine;
 import pogrebenko.loggerwrapper.LoggerWrapper;
 

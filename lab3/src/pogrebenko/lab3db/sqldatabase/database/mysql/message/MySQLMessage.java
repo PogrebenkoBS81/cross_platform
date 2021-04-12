@@ -1,7 +1,7 @@
 package pogrebenko.lab3db.sqldatabase.database.mysql.message;
 
 import pogrebenko.lab3db.model.message.Message;
-import pogrebenko.lab3db.sqldatabase.common.abstraction.IMessageDB;
+import pogrebenko.lab3db.sqldatabase.common.contract.IMessageDB;
 import pogrebenko.lab3db.sqldatabase.common.parser.MessageParser;
 import pogrebenko.lab3db.sqldatabase.database.core.Core;
 import pogrebenko.loggerwrapper.LoggerWrapper;

@@ -1,4 +1,4 @@
-package pogrebenko.lab3db.sqldatabase.common.abstraction;
+package pogrebenko.lab3db.sqldatabase.common.contract;
 
 import pogrebenko.lab3db.model.medicine.Medicine;
 import pogrebenko.lab3db.model.medicine.MedicineID;

@@ -21,9 +21,9 @@ import pogrebenko.lab3db.model.medicine.MedicineContainer;
 import pogrebenko.lab3db.model.medicine.MedicineID;
 import pogrebenko.lab3db.model.message.Message;
 import pogrebenko.lab3db.model.message.MessageContainer;
-import pogrebenko.lab3db.sqldatabase.common.abstraction.IMedicineDB;
-import pogrebenko.lab3db.sqldatabase.common.abstraction.IMessageDB;
-import pogrebenko.lab3db.sqldatabase.common.abstraction.IToolsDB;
+import pogrebenko.lab3db.sqldatabase.common.contract.IMedicineDB;
+import pogrebenko.lab3db.sqldatabase.common.contract.IMessageDB;
+import pogrebenko.lab3db.sqldatabase.common.contract.IToolsDB;
 import pogrebenko.lab3db.sqldatabase.common.factory.MedicineFactory;
 import pogrebenko.lab3db.sqldatabase.common.factory.MessageFactory;
 import pogrebenko.lab3db.sqldatabase.common.factory.ToolsFactory;
@@ -502,8 +502,7 @@ public class MainController {
     @FXML
     void onHelpPressed(ActionEvent event) {
         String message = """
-                To search for all medicines, select search medicines selector as "None",
-                and then press "Search".
+                To search for all medicines, select search medicines selector as "None", and then press "Search".
                 """;
 
         new Alert(Alert.AlertType.INFORMATION, message, ButtonType.YES).showAndWait();
