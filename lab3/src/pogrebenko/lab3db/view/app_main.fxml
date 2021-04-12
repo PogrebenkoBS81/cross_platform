@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="656.0" prefWidth="1103.0" xmlns="http://javafx.com/javafx/15.0.1"
+            fx:controller="pogrebenko.lab3db.controller.MainController">
+    <Button layoutX="14.0" layoutY="622.0" mnemonicParsing="false" onAction="#onLastBtnPressed" prefHeight="25.0"
+            prefWidth="62.0" text="last"/>
+    <TableView fx:id="tvMedicineTable" editable="true" layoutX="14.0" layoutY="46.0" prefHeight="567.0"
+               prefWidth="748.0">
+        <columns>
+            <TableColumn fx:id="columnName" onEditCommit="#onColumnNameEdit" prefWidth="100.0" text="Name"/>
+            <TableColumn fx:id="columnForm" onEditCommit="#onColumnFormEdit" prefWidth="91.0" text="Form"/>
+            <TableColumn fx:id="columnProducer" onEditCommit="#onColumnProducerEdit" prefWidth="83.0" text="Producer"/>
+            <TableColumn fx:id="columnExpires" onEditCommit="#onColumnExpiresEdit" prefWidth="116.0" text="Expires"/>
+            <TableColumn fx:id="columnProduced" onEditCommit="#onColumnProducedEdit" prefWidth="106.0" text="Produced"/>
+            <TableColumn fx:id="columnCost" onEditCommit="#onColumnCostEdit" prefWidth="81.0" text="Cost"/>
+            <TableColumn fx:id="columnPrescriptionOnly" onEditCommit="#onColumnPrescriptionEdit" prefWidth="107.0"
+                         text="Prescription only"/>
+            <TableColumn fx:id="columnID" editable="false" prefWidth="63.0" text="MedID"/>
+        </columns>
+    </TableView>
+    <Button layoutX="700.0" layoutY="622.0" mnemonicParsing="false" onAction="#onNextBtnPressed" prefHeight="25.0"
+            prefWidth="62.0" text="next"/>
+    <Button layoutX="634.0" layoutY="622.0" mnemonicParsing="false" onAction="#onPreviousBtnPressed" text="previous"/>
+    <Button layoutX="81.0" layoutY="622.0" mnemonicParsing="false" onAction="#onFirstBtnPressed" prefHeight="25.0"
+            prefWidth="62.0" text="first"/>
+    <Button layoutX="417.0" layoutY="622.0" mnemonicParsing="false" onAction="#onDataExport" text="Export"/>
+    <Label layoutX="14.0" layoutY="12.0" prefHeight="25.0" prefWidth="135.0" text="Medicine viewer:">
+        <font>
+            <Font name="System Bold" size="16.0"/>
+        </font>
+    </Label>
+    <Label layoutX="533.0" layoutY="15.0" text="Name filter:">
+        <font>
+            <Font size="14.0"/>
+        </font>
+    </Label>
+    <TextField fx:id="tfFilter" layoutX="613.0" layoutY="12.0"/>
+    <Button layoutX="360.0" layoutY="622.0" mnemonicParsing="false" onAction="#onImportBtnPressed" text="Import"/>
+    <AnchorPane layoutX="775.0" layoutY="46.0" prefHeight="432.0" prefWidth="317.0"
+                style="-fx-background-color: #ededed;">
+        <children>
+            <Label layoutX="5.0" layoutY="2.0" prefHeight="25.0" prefWidth="175.0" text="Medicine Controller:">
+                <font>
+                    <Font name="System Bold" size="16.0"/>
+                </font>
+            </Label>
+            <TextField fx:id="tfMedicineExpires" layoutX="117.0" layoutY="140.0" prefHeight="25.0" prefWidth="182.0"/>
+            <Label layoutX="8.0" layoutY="140.0" prefHeight="25.0" prefWidth="85.0" text="Expires:">
+                <font>
+                    <Font name="System Bold Italic" size="14.0"/>
+                </font>
+            </Label>
+            <TextField fx:id="tfMedicineProduced" layoutX="117.0" layoutY="175.0" prefHeight="25.0" prefWidth="182.0"/>
+            <Label layoutX="8.0" layoutY="176.0" prefHeight="25.0" prefWidth="85.0" text="Produced:">
+                <font>
+                    <Font name="System Bold Italic" size="14.0"/>
+                </font>
+            </Label>
+            <TextField fx:id="tfMedicineCost" layoutX="118.0" layoutY="210.0" prefHeight="25.0" prefWidth="182.0"/>
+            <Label layoutX="8.0" layoutY="210.0" prefHeight="25.0" prefWidth="85.0" text="Cost:">
+                <font>
+                    <Font name="System Bold Italic" size="14.0"/>
+                </font>
+            </Label>
+            <TextField fx:id="tfMedicinePSOnly" layoutX="119.0" layoutY="246.0" prefHeight="25.0" prefWidth="182.0"/>
+            <Label layoutX="8.0" layoutY="246.0" prefHeight="25.0" prefWidth="85.0" text="Presc. only:">
+                <font>
+                    <Font name="System Bold Italic" size="14.0"/>
+                </font>
+            </Label>
+            <TextField fx:id="tfMedicineName" layoutX="116.0" layoutY="35.0" prefHeight="25.0" prefWidth="182.0"/>
+            <Label layoutX="7.0" layoutY="35.0" prefHeight="25.0" prefWidth="85.0" text="Name:">
+                <font>
+                    <Font name="System Bold Italic" size="14.0"/>
+                </font>
+            </Label>
+            <TextField fx:id="tfMedicineForm" layoutX="117.0" layoutY="70.0" prefHeight="25.0" prefWidth="182.0"/>
+            <Label layoutX="7.0" layoutY="71.0" prefHeight="25.0" prefWidth="85.0" text="From:">
+                <font>
+                    <Font name="System Bold Italic" size="14.0"/>
+                </font>
+            </Label>
+            <TextField fx:id="tfMedicineProducer" layoutX="117.0" layoutY="105.0" prefHeight="25.0" prefWidth="182.0"/>
+            <Label layoutX="7.0" layoutY="105.0" prefHeight="25.0" prefWidth="85.0" text="Producer:">
+                <font>
+                    <Font name="System Bold Italic" size="14.0"/>
+                </font>
+            </Label>
+            <Button layoutX="138.0" layoutY="281.0" mnemonicParsing="false" onAction="#onAddMedicinePressed"
+                    prefHeight="25.0" prefWidth="50.0" text="Add"/>
+            <TextField fx:id="tfMedicineSearch" layoutX="118.0" layoutY="359.0" prefHeight="25.0" prefWidth="182.0"/>
+            <Label layoutX="14.0" layoutY="328.0" prefHeight="25.0" prefWidth="149.0" text="Search medicines :">
+                <font>
+                    <Font name="System Bold Italic" size="14.0"/>
+                </font>
+            </Label>
+            <Button layoutX="137.0" layoutY="395.0" mnemonicParsing="false" onAction="#onMedicineSearch" text="Search"/>
+            <ComboBox fx:id="cbMedicineSearch" layoutX="7.0" layoutY="359.0" promptText="Search by..."/>
+        </children>
+    </AnchorPane>
+    <Label layoutX="775.0" layoutY="13.0" prefHeight="25.0" prefWidth="129.0" text="Control panel:">
+        <font>
+            <Font name="System Bold" size="16.0"/>
+        </font>
+    </Label>
+    <AnchorPane layoutX="775.0" layoutY="488.0" prefHeight="168.0" prefWidth="317.0"
+                style="-fx-background-color: #ededed;">
+        <children>
+            <Label layoutX="6.0" layoutY="-5.0" prefHeight="33.0" prefWidth="175.0" text="DB Controller:">
+                <font>
+                    <Font name="System Bold" size="16.0"/>
+                </font>
+            </Label>
+            <Label layoutX="6.0" layoutY="100.0" prefHeight="25.0" prefWidth="149.0" text="Log DB options:">
+                <font>
+                    <Font name="System Bold Italic" size="14.0"/>
+                </font>
+            </Label>
+            <Label layoutX="6.0" layoutY="28.0" prefHeight="25.0" prefWidth="149.0" text="Medicine DB options:">
+                <font>
+                    <Font name="System Bold Italic" size="14.0"/>
+                </font>
+            </Label>
+            <Button layoutX="6.0" layoutY="134.0" mnemonicParsing="false" onAction="#onDropLogDBPressed"
+                    prefHeight="25.0" prefWidth="89.0" text="Drop Log DB"/>
+            <Button layoutX="6.0" layoutY="62.0" mnemonicParsing="false" onAction="#onDropMedDBPressed"
+                    text="Drop Med DB"/>
+            <Button layoutX="107.0" layoutY="62.0" mnemonicParsing="false" onAction="#onDeleteSelectedMed"
+                    text="Delete selected med"/>
+            <Button layoutX="107.0" layoutY="134.0" mnemonicParsing="false" onAction="#onLogDBExport"
+                    text="Export log DB"/>
+        </children>
+    </AnchorPane>
+    <Button layoutX="1045.0" layoutY="12.0" mnemonicParsing="false" onAction="#onHelpPressed" text="Help?"/>
+</AnchorPane>

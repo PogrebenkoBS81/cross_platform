@@ -1,0 +1,6 @@
+name,form,producer,expirationDate,productionDate,cost,isPrescriptionOnly
+name1,form1,producer1,26/02/2021,22/02/2021,11,TRUE
+name2,form2,producer2,26/02/2021,25/02/2021,12,FALSE
+name3,form3,producer3,,24/02/2021,133,FALSE
+name3,form4,producer4,26/02/2021,28/02/2021,14,FALSE
+name5,form5,producer5,26/02/2021,23/02/2021,16,TRUE

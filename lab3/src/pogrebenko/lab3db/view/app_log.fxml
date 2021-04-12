@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="539.0" prefWidth="601.0"
+            xmlns="http://javafx.com/javafx/15.0.1" fx:controller="pogrebenko.lab3db.controller.LogController">
+    <TextArea fx:id="taExecLogConsole" editable="false" layoutX="13.0" layoutY="63.0" prefHeight="429.0"
+              prefWidth="575.0"/>
+    <Label layoutX="207.0" layoutY="14.0" text="EXECUTION LOG">
+        <font>
+            <Font name="System Bold" size="24.0"/>
+        </font>
+    </Label>
+    <Button layoutX="279.0" layoutY="500.0" mnemonicParsing="false"
+            onAction="#onLogClearPressed" text="Clear Log"/>
+    <Button layoutX="552.0" layoutY="500.0" mnemonicParsing="false" onAction="#onExitPressed"
+            text="Exit"/>
+</AnchorPane>
