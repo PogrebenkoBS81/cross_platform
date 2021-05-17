@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="655.0" prefWidth="881.0"
+            style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/15.0.1"
+            fx:controller="pogrebenko.labfive.controller.main.MainController">
+    <Label layoutX="14.0" layoutY="14.0" prefHeight="19.0" prefWidth="116.0" style="-fx-background-color: #ffffff;"
+           text="DICOM Viewer">
+        <font>
+            <Font name="System Bold" size="16.0"/>
+        </font>
+    </Label>
+    <ListView fx:id="listViewImages" layoutX="14.0" layoutY="39.0" prefHeight="514.0" prefWidth="292.0"/>
+    <Button fx:id="btnLoadImg" layoutX="14.0" layoutY="582.0" mnemonicParsing="false" onAction="#onLoadImages"
+            text="Load Images"/>
+    <ProgressBar fx:id="pbFilesLoading" layoutX="116.0" layoutY="586.0" prefHeight="18.0" prefWidth="190.0"
+                 progress="0.0"/>
+    <TextField fx:id="tfFilesDir" layoutX="395.0" layoutY="594.0" prefHeight="25.0" prefWidth="381.0" text="\\lab5"/>
+    <Label layoutX="317.0" layoutY="598.0" text="FTP Files dir:"/>
+    <TextField fx:id="tfSaveDir" editable="false" layoutX="395.0" layoutY="563.0" prefHeight="25.0" prefWidth="381.0"
+               text="D:\test"/>
+    <Label layoutX="317.0" layoutY="567.0" text="Save dir:"/>
+    <Button fx:id="btnSelectSaveDir" layoutX="791.0" layoutY="563.0" mnemonicParsing="false" onAction="#onChooseSaveDir"
+            prefHeight="25.0" prefWidth="68.0" text="Browse"/>
+    <Label layoutX="316.0" layoutY="627.0" prefHeight="17.0" prefWidth="106.0" text="Overwrite if exists:"/>
+    <CheckBox fx:id="cbOverwriteSave" layoutX="422.0" layoutY="627.0" mnemonicParsing="false" selected="true"/>
+    <Text fx:id="textProgress" layoutX="116.0" layoutY="622.0" strokeType="OUTSIDE" strokeWidth="0.0"
+          wrappingWidth="190.0"/>
+    <AnchorPane layoutX="315.0" layoutY="39.0" prefHeight="392.0" prefWidth="543.0" style="-fx-border-color: black;">
+        <children>
+            <Canvas fx:id="canvasImage" height="385.0" layoutX="6.0" layoutY="3.0" width="533.0"/>
+        </children>
+    </AnchorPane>
+    <AnchorPane layoutX="315.0" layoutY="440.0" prefHeight="113.0" prefWidth="543.0" style="-fx-border-color: black;">
+        <children>
+            <Label fx:id="lbImageData" alignment="CENTER" layoutX="5.0" layoutY="4.0" prefHeight="106.0"
+                   prefWidth="533.0"/>
+        </children>
+    </AnchorPane>
+</AnchorPane>
