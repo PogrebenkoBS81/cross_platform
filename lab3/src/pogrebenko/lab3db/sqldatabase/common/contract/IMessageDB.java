@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @since 1.3.0
  */
 @SuppressWarnings("UnusedReturnValue")
-public interface IMessageDB extends ICore {
+public interface IMessageDB {
     /**
      * Prepares all required tables in DB for work.
      *

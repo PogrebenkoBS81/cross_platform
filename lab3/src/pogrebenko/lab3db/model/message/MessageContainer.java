@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import static pogrebenko.lab3db.model.util.ModelUtil.cutEndChars;
+import static pogrebenko.lab3db.commonutil.CommonUtil.cutEndChars;
 
 /**
  * Container for the Message objects.

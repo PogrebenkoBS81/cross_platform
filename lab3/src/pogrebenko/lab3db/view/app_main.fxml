@@ -3,7 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity"
             prefHeight="656.0" prefWidth="1103.0" xmlns="http://javafx.com/javafx/15.0.1"
             fx:controller="pogrebenko.lab3db.controller.MainController">
     <Button layoutX="14.0" layoutY="622.0" mnemonicParsing="false" onAction="#onLastBtnPressed" prefHeight="25.0"

@@ -21,13 +21,15 @@ import pogrebenko.lab3db.model.medicine.MedicineContainer;
 import pogrebenko.lab3db.model.medicine.MedicineID;
 import pogrebenko.lab3db.model.message.Message;
 import pogrebenko.lab3db.model.message.MessageContainer;
+import pogrebenko.lab3db.sqldatabase.common.contract.ICore;
 import pogrebenko.lab3db.sqldatabase.common.contract.IMedicineDB;
 import pogrebenko.lab3db.sqldatabase.common.contract.IMessageDB;
 import pogrebenko.lab3db.sqldatabase.common.contract.IToolsDB;
-import pogrebenko.lab3db.sqldatabase.common.factory.MedicineFactory;
-import pogrebenko.lab3db.sqldatabase.common.factory.MessageFactory;
-import pogrebenko.lab3db.sqldatabase.common.factory.ToolsFactory;
+import pogrebenko.lab3db.sqldatabase.common.factory.CoreFactory;
 import pogrebenko.lab3db.sqldatabase.database.mysql.medicine.FilterField;
+import pogrebenko.lab3db.sqldatabase.database.mysql.medicine.MySQLMedicine;
+import pogrebenko.lab3db.sqldatabase.database.mysql.message.MySQLMessage;
+import pogrebenko.lab3db.sqldatabase.database.mysql.tools.MySQLTools;
 import pogrebenko.loggerwrapper.LoggerWrapper;
 
 import java.io.File;
@@ -74,6 +76,7 @@ public class MainController {
     // Databases required for the controller.
     // TODO: DBs should start in another thread, or otherwise,
     //  if connection waiting for timeout, app will hang.
+    private ICore dbCore;
     private IMedicineDB medicineDB;
     private IMessageDB messageDB;
     // DB settings fields.
@@ -502,7 +505,8 @@ public class MainController {
     @FXML
     void onHelpPressed(ActionEvent event) {
         String message = """
-                To search for all medicines, select search medicines selector as "None", and then press "Search".
+                To search for all medicines, select search medicines selector as "None",
+                and then press "Search".
                 """;
 
         new Alert(Alert.AlertType.INFORMATION, message, ButtonType.YES).showAndWait();
@@ -700,46 +704,45 @@ public class MainController {
     public void prepareController() throws IOException, SQLException {
         LoggerWrapper.getWrapper().addFileHandler(getLogPath());
         LOGGER.info("Initializing medicine container...");
-        // Create database if not exists.
-        initDB();
-        // Establish connections with medicine and message DB.
-        prepareDBs();
+        prepareDatabase();
         // Set filter and bind sortedlist to the table.
         prepareTable();
         // Fill the table with already existing values from DB.
         addMedicinesToTable(medicineDB.getMedicines());
     }
 
-    /**
-     * Creates given DB if not exists.
-     *
-     * @throws SQLException on a database access error or other errors.
-     */
-    private void initDB() throws SQLException {
-        // Connect without DB name.
-        IToolsDB toolsDB = ToolsFactory.getMySQLDatabase(
-                getDBHost(),
-                getDBPort(),
-                "",
-                getDBUser(),
-                getDBPassword()
-        );
-        // Create required DB and close DB tools.
-        toolsDB.createDB(getDBName());
-        toolsDB.close();
+    private void prepareDatabase() throws SQLException {
+        // Create DB.
+        getToolsDB(getCoreDB("")).createDB(getDBName());
+        // Get requested DB core.
+        dbCore = getCoreDB(getDBName());
+        // Init required DB handlers.
+        medicineDB = getMedicineDB(dbCore);
+        messageDB = getMessageDB(dbCore);
+        // Prepare tables
+        medicineDB.initialize();
+        messageDB.initialize();
     }
 
-    /**
-     * Prepares every DB for work.
-     *
-     * @throws SQLException on a database access error or other errors.
-     */
-    private void prepareDBs() throws SQLException {
-        medicineDB = getMedicineDB(getDBType());
-        medicineDB.initialize();
+    private IMedicineDB getMedicineDB(ICore SQLDbCore) {
+        //noinspection SwitchStatementWithTooFewBranches
+        return switch (getDBType()) {
+            case MYSQL -> new MySQLMedicine(SQLDbCore);
+        };
+    }
 
-        messageDB = getMessageDB(getDBType());
-        messageDB.initialize();
+    private IMessageDB getMessageDB(ICore SQLDbCore) {
+        //noinspection SwitchStatementWithTooFewBranches
+        return switch (getDBType()) {
+            case MYSQL -> new MySQLMessage(SQLDbCore);
+        };
+    }
+
+    private IToolsDB getToolsDB(ICore SQLDbCore) {
+        //noinspection SwitchStatementWithTooFewBranches
+        return switch (getDBType()) {
+            case MYSQL -> new MySQLTools(SQLDbCore);
+        };
     }
 
     /**
@@ -782,36 +785,17 @@ public class MainController {
 
     /**
      * Establishes connection with medicines DB.
-     *
-     * @param dbType type of DB to create.
      */
-    private IMedicineDB getMedicineDB(DBType dbType) throws SQLException {
+    private ICore getCoreDB(String dbName) throws SQLException {
         //noinspection SwitchStatementWithTooFewBranches
-        return switch (dbType) {
-            case MYSQL -> medicineDB = MedicineFactory.getMySQLDatabase(
+        return switch (getDBType()) {
+            case MYSQL -> CoreFactory.getMySQLCore(
                     getDBHost(),
                     getDBPort(),
-                    getDBName(),
+                    dbName,
                     getDBUser(),
-                    getDBPassword()
-            );
-        };
-    }
-
-    /**
-     * Establishes connection with messages DB.
-     *
-     * @param dbType type of DB to create.
-     */
-    private IMessageDB getMessageDB(DBType dbType) throws SQLException {
-        //noinspection SwitchStatementWithTooFewBranches
-        return switch (dbType) {
-            case MYSQL -> messageDB = MessageFactory.getMySQLDatabase(
-                    getDBHost(),
-                    getDBPort(),
-                    getDBName(),
-                    getDBUser(),
-                    getDBPassword()
+                    getDBPassword(),
+                    "useSSL=false", "allowPublicKeyRetrieval=true"
             );
         };
     }
@@ -844,8 +828,7 @@ public class MainController {
      */
     public void onStageClosing(WindowEvent windowEvent) {
         try {
-            medicineDB.close();
-            messageDB.close();
+            dbCore.close();
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }

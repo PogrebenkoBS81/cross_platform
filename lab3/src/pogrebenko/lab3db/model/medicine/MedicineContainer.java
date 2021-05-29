@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static pogrebenko.lab3db.model.util.ModelUtil.*;
+import static pogrebenko.lab3db.commonutil.CommonUtil.*;
 
 /**
  * Container for the Medicine objects.

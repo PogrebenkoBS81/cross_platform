@@ -1,9 +1,9 @@
 package pogrebenko.lab3db.sqldatabase.database.mysql.message;
 
 import pogrebenko.lab3db.model.message.Message;
+import pogrebenko.lab3db.sqldatabase.common.contract.ICore;
 import pogrebenko.lab3db.sqldatabase.common.contract.IMessageDB;
 import pogrebenko.lab3db.sqldatabase.common.parser.MessageParser;
-import pogrebenko.lab3db.sqldatabase.database.core.Core;
 import pogrebenko.loggerwrapper.LoggerWrapper;
 
 import java.sql.SQLException;
@@ -20,33 +20,18 @@ import static pogrebenko.lab3db.sqldatabase.database.util.DBUtil.getKey;
  * @version 1.3.0
  * @since 1.3.0
  */
-public class MySQLMessage extends Core implements IMessageDB {
+public class MySQLMessage implements IMessageDB {
 
     private static final Logger LOGGER = LoggerWrapper.getLogger();
+    ICore SQLCore;
 
     /**
      * Creates an MySQL connection for the message DB.
      *
-     * @param host     host of the DB to connect.
-     * @param port     port of the DB to connect.
-     * @param dbName   database name of the DB to connect.
-     * @param userName user of the DB to connect.
-     * @param password user password of the DB to connect.
-     * @throws SQLException on a database access error or other errors.
+     * @param SQLCore SQL core for queries execution.
      */
-    public MySQLMessage(
-            String host,
-            int port,
-            String dbName,
-            String userName,
-            String password
-    ) throws SQLException {
-        super(
-                String.format("jdbc:mysql://%s:%d/%s", host, port, dbName),
-                new com.mysql.cj.jdbc.Driver(),
-                userName,
-                password
-        );
+    public MySQLMessage(ICore SQLCore) {
+        this.SQLCore = SQLCore;
     }
 
     /**
@@ -69,7 +54,7 @@ public class MySQLMessage extends Core implements IMessageDB {
      */
     public int writeMessage(Message message) throws SQLException {
         LOGGER.info("Writing new message to DB...");
-        int key = getKey(execute(Queries.INSERT_MESSAGE, message.getMessage()));
+        int key = getKey(SQLCore.execute(Queries.INSERT_MESSAGE, message.getMessage()));
         LOGGER.info("New message generated ID is: " + key);
 
         return key;
@@ -84,7 +69,7 @@ public class MySQLMessage extends Core implements IMessageDB {
     public ArrayList<Message> getMessages() throws SQLException {
         LOGGER.info("Returning all messages from the DB...");
 
-        return MessageParser.loadMessages(executeQuery(Queries.SELECT_MESSAGES));
+        return MessageParser.loadMessages(SQLCore.executeQuery(Queries.SELECT_MESSAGES));
     }
 
     /**
@@ -95,7 +80,7 @@ public class MySQLMessage extends Core implements IMessageDB {
     public void truncateTable() throws SQLException {
         LOGGER.info("Returning all messages from to DB...");
 
-        execute(Queries.TRUNCATE_TABLE);
+        SQLCore.execute(Queries.TRUNCATE_TABLE);
     }
 
     /**
@@ -106,6 +91,6 @@ public class MySQLMessage extends Core implements IMessageDB {
     private void createTable() throws SQLException {
         LOGGER.info("Creating table for the message DB if not exists... ");
 
-        execute(Queries.CREATE_TABLE);
+        SQLCore.execute(Queries.CREATE_TABLE);
     }
 }

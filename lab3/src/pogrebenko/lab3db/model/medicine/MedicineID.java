@@ -5,7 +5,7 @@ import pogrebenko.loggerwrapper.LoggerWrapper;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import static pogrebenko.lab3db.model.util.ModelUtil.cutEndChars;
+import static pogrebenko.lab3db.commonutil.CommonUtil.cutEndChars;
 
 /**
  * Extends the Medicine class, adds ID to an object.

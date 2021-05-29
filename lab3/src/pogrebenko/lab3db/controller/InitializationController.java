@@ -9,7 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import pogrebenko.lab3db.model.util.ModelUtil;
+import pogrebenko.lab3db.commonutil.CommonUtil;
 import pogrebenko.lab3db.view.ViewRoutes;
 import pogrebenko.loggerwrapper.LoggerWrapper;
 
@@ -93,7 +93,7 @@ public class InitializationController {
     void onContinuePressed(ActionEvent event) {
         LOGGER.info("Continue button pressed, validating input...");
         // Check if the selected files exist.
-        if (!ModelUtil.isFileExists(getLogFilePath())) {
+        if (!CommonUtil.isFileExists(getLogFilePath())) {
             LOGGER.severe("Given log file path is invalid: " + getLogFilePath());
             new Alert(Alert.AlertType.ERROR, "Invalid log file path!", ButtonType.YES).showAndWait();
 
@@ -151,8 +151,7 @@ public class InitializationController {
      * and realisation above would be really hard-to-read, i decided to do it simple.
      *
      * @param event browse event.
-     * @throws IOException,  on import data errors.
-     * @throws SQLException, on DB preparation errors.
+     * @throws IOException, on import data errors.
      */
     private void prepareMainController(ActionEvent event) throws IOException, SQLException {
         LOGGER.info("Switching to the new window, loading scene...");

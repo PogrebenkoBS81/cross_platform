@@ -1,5 +1,6 @@
 package pogrebenko.lab3db.sqldatabase.database.core;
 
+import pogrebenko.lab3db.commonutil.CommonUtil;
 import pogrebenko.lab3db.sqldatabase.common.contract.ICore;
 import pogrebenko.loggerwrapper.LoggerWrapper;
 
@@ -50,20 +51,41 @@ public class Core implements ICore {
      * @param password   user password of the DB to conn
      * @throws SQLException on a database access error or other errors.
      */
-    protected Core(
+    public Core(
             String connString,
             Driver driver,
             String userName,
-            String password
+            String password,
+            String... params
     ) throws SQLException {
         LOGGER.info("Trying to establish SQL connection...");
 
-        this.connString = connString;
+
+        this.connString = addParams(connString, params);
         this.userName = userName;
         this.password = password.toCharArray();
         // Register required SQL driver
+        LOGGER.info(this.connString + " " + this.userName);
+
         DriverManager.registerDriver(driver);
         open(userName, password);
+    }
+
+    /**
+     * Adds connection params to the sql connection.
+     *
+     * @param connString connection string to edit.
+     * @param params     params to add.
+     * @return modified connection string.
+     */
+    private static String addParams(String connString, String... params) {
+        StringBuilder newConn = new StringBuilder(String.format("%s?", connString));
+
+        for (String param : params) {
+            newConn.append(String.format("%s&", param));
+        }
+
+        return CommonUtil.cutEndChars(newConn.toString(), 1);
     }
 
     /**
@@ -100,24 +122,6 @@ public class Core implements ICore {
     }
 
     /**
-     * Restarts the DB connection, in attempt to reconnect to DB.
-     *
-     * @throws SQLException on a database access error or other errors.
-     */
-    private synchronized void restart() throws SQLException {
-        LOGGER.info("Trying to restart DB... ");
-        // Try to close connection anyway, even if it's already closed.
-        try {
-            conn.close();
-        } catch (Exception ignored) {
-        }
-
-        conn = null;
-
-        open(userName, new String(password));
-    }
-
-    /**
      * Executes the query built from the passed parameters, and returns the ResultSet of the execution.
      *
      * @param query  query to prepare.
@@ -125,7 +129,7 @@ public class Core implements ICore {
      * @return ResultSet with retrieved data
      * @throws SQLException on a database access error or other errors.
      */
-    protected synchronized ResultSet executeQuery(String query, Object... params) throws SQLException {
+    public synchronized ResultSet executeQuery(String query, Object... params) throws SQLException {
         LOGGER.info("Executing SQL query... ");
 
         PreparedStatement exec = prepareStatement(getStatement(query), params);
@@ -143,7 +147,7 @@ public class Core implements ICore {
      * @throws SQLException on a database access error or other errors.
      */
     @SuppressWarnings("UnusedReturnValue")
-    protected synchronized int[] executeBatch(PreparedStatement batchStmt) throws SQLException {
+    public synchronized int[] executeBatch(PreparedStatement batchStmt) throws SQLException {
         LOGGER.info("Executing SQL batch query... ");
 
         // TODO: Since there is only 1 thread, and all methods are "synchronized"
@@ -183,13 +187,52 @@ public class Core implements ICore {
      * @return newly generated keys.
      * @throws SQLException on a database access error or other errors.
      */
-    protected synchronized ArrayList<Integer> execute(String query, Object... params) throws SQLException {
+    public synchronized ArrayList<Integer> execute(String query, Object... params) throws SQLException {
         LOGGER.info("Executing SQL statement... ");
 
         try (PreparedStatement exec = prepareStatement(getStatement(query), params)) {
             exec.execute();
             return getInsertedKeys(exec.getGeneratedKeys());
         }
+    }
+
+    /**
+     * Returns new statement from given connection with specified parameters.
+     *
+     * @param query the query from which the statement is formed.
+     * @throws SQLException on a database access error or other errors.
+     */
+    public PreparedStatement getStatement(String query) throws SQLException {
+        LOGGER.info(String.format("Generating SQL statement with timeout %d... ", defaultTimeoutStmt));
+        ensureConnection();
+        // TODO: RETURN_GENERATED_KEYS depends on driver realisation, and some drivers may not work correctly.
+        //  Better change it on explicit key definition (pass required key field to this function).
+        //  It will be not so pretty, but more reliable.
+        PreparedStatement statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+        statement.setQueryTimeout(defaultTimeoutStmt);
+        return statement;
+    }
+
+    /**
+     * Prepares statement for the execution.
+     *
+     * @param statement statement to prepare
+     * @param params    query parameters.
+     * @return prepared statement ready for the execution.
+     * @throws SQLException on a database access error or other errors.
+     */
+    public PreparedStatement prepareStatement(
+            PreparedStatement statement,
+            Object... params
+    ) throws SQLException {
+        LOGGER.finest("Preparing SQL statement...");
+        // A little bit of an overhead here, but it's almost nothing,
+        // and saves a lot amount of code. So it's fine.
+        for (int i = 1; i < params.length + 1; i++) {
+            statement.setObject(i, params[i - 1]);
+        }
+
+        return statement;
     }
 
     /**
@@ -219,42 +262,21 @@ public class Core implements ICore {
     }
 
     /**
-     * Returns new statement from given connection with specified parameters.
+     * Restarts the DB connection, in attempt to reconnect to DB.
      *
-     * @param query the query from which the statement is formed.
      * @throws SQLException on a database access error or other errors.
      */
-    protected PreparedStatement getStatement(String query) throws SQLException {
-        LOGGER.info(String.format("Generating SQL statement with timeout %d... ", defaultTimeoutStmt));
-        ensureConnection();
-        // TODO: RETURN_GENERATED_KEYS depends on driver realisation, and some drivers may not work correctly.
-        //  Better change it on explicit key definition (pass required key field to this function).
-        //  It will be not so pretty, but more reliable.
-        PreparedStatement statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-        statement.setQueryTimeout(defaultTimeoutStmt);
-        return statement;
-    }
-
-    /**
-     * Prepares statement for the execution.
-     *
-     * @param statement statement to prepare
-     * @param params    query parameters.
-     * @return prepared statement ready for the execution.
-     * @throws SQLException on a database access error or other errors.
-     */
-    protected PreparedStatement prepareStatement(
-            PreparedStatement statement,
-            Object... params
-    ) throws SQLException {
-        LOGGER.finest("Preparing SQL statement...");
-        // A little bit of an overhead here, but it's almost nothing,
-        // and saves a lot amount of code. So it's fine.
-        for (int i = 1; i < params.length + 1; i++) {
-            statement.setObject(i, params[i - 1]);
+    private synchronized void restart() throws SQLException {
+        LOGGER.info("Trying to restart DB... ");
+        // Try to close connection anyway, even if it's already closed.
+        try {
+            conn.close();
+        } catch (Exception ignored) {
         }
 
-        return statement;
+        conn = null;
+
+        open(userName, new String(password));
     }
 
     /**

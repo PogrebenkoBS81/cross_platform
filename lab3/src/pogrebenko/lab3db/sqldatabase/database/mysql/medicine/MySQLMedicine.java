@@ -2,9 +2,9 @@ package pogrebenko.lab3db.sqldatabase.database.mysql.medicine;
 
 import pogrebenko.lab3db.model.medicine.Medicine;
 import pogrebenko.lab3db.model.medicine.MedicineID;
+import pogrebenko.lab3db.sqldatabase.common.contract.ICore;
 import pogrebenko.lab3db.sqldatabase.common.contract.IMedicineDB;
 import pogrebenko.lab3db.sqldatabase.common.parser.MedicineParser;
-import pogrebenko.lab3db.sqldatabase.database.core.Core;
 import pogrebenko.loggerwrapper.LoggerWrapper;
 
 import java.sql.PreparedStatement;
@@ -23,33 +23,18 @@ import static pogrebenko.lab3db.sqldatabase.database.util.DBUtil.getKey;
  * @version 1.3.0
  * @since 1.3.0
  */
-public class MySQLMedicine extends Core implements IMedicineDB {
+public class MySQLMedicine implements IMedicineDB {
 
     private static final Logger LOGGER = LoggerWrapper.getLogger();
+    ICore SQLCore;
 
     /**
      * Creates an MySQL connection for the medicine DB.
      *
-     * @param host     host of the DB to connect.
-     * @param port     port of the DB to connect.
-     * @param dbName   database name of the DB to connect.
-     * @param userName user of the DB to connect.
-     * @param password user password of the DB to connect.
-     * @throws SQLException on a database access error or other errors.
+     * @param SQLCore SQL core for queries execution.
      */
-    public MySQLMedicine(
-            String host,
-            int port,
-            String dbName,
-            String userName,
-            String password
-    ) throws SQLException {
-        super(
-                String.format("jdbc:mysql://%s:%d/%s", host, port, dbName),
-                new com.mysql.cj.jdbc.Driver(),
-                userName,
-                password
-        );
+    public MySQLMedicine(ICore SQLCore) {
+        this.SQLCore = SQLCore;
     }
 
     /**
@@ -71,14 +56,14 @@ public class MySQLMedicine extends Core implements IMedicineDB {
      */
     public void writeMedicines(ArrayList<? extends Medicine> medicines) throws SQLException {
         LOGGER.info("Writing medicines to DB...");
-        PreparedStatement stmt = getStatement(Queries.INSERT_MEDICINE);
+        PreparedStatement stmt = SQLCore.getStatement(Queries.INSERT_MEDICINE);
 
         for (Medicine medicine : medicines) {
-            prepareStatement(stmt, MedicineParser.getMedicineParams(medicine));
+            SQLCore.prepareStatement(stmt, MedicineParser.getMedicineParams(medicine));
             stmt.addBatch();
         }
 
-        executeBatch(stmt);
+        SQLCore.executeBatch(stmt);
     }
 
     /**
@@ -90,7 +75,7 @@ public class MySQLMedicine extends Core implements IMedicineDB {
      */
     public int writeMedicine(Medicine medicine) throws SQLException {
         LOGGER.info("Writing new medicine to DB...");
-        int key = getKey(execute(Queries.INSERT_MEDICINE, MedicineParser.getMedicineParams(medicine)));
+        int key = getKey(SQLCore.execute(Queries.INSERT_MEDICINE, MedicineParser.getMedicineParams(medicine)));
         LOGGER.info("New medicine generated ID is: " + key);
 
         return key;
@@ -105,7 +90,7 @@ public class MySQLMedicine extends Core implements IMedicineDB {
     public ArrayList<MedicineID> getMedicines() throws SQLException {
         LOGGER.info("Returning all medicines from the DB...");
 
-        return MedicineParser.loadMedicines(executeQuery(Queries.SELECT_MEDICINES));
+        return MedicineParser.loadMedicines(SQLCore.executeQuery(Queries.SELECT_MEDICINES));
     }
 
     /**
@@ -117,7 +102,7 @@ public class MySQLMedicine extends Core implements IMedicineDB {
     public MedicineID getMedicine(int medicineID) throws SQLException {
         LOGGER.info("Returning single from DB, medicine ID: " + medicineID);
 
-        return MedicineParser.loadMedicine(executeQuery(Queries.ID_FILTER, medicineID));
+        return MedicineParser.loadMedicine(SQLCore.executeQuery(Queries.ID_FILTER, medicineID));
     }
 
     /**
@@ -129,7 +114,7 @@ public class MySQLMedicine extends Core implements IMedicineDB {
     public void updateMedicine(MedicineID medicine) throws SQLException {
         LOGGER.info("Updating medicine with ID: " + medicine.getId());
 
-        execute(Queries.UPDATE_MEDICINE, MedicineParser.getMedicineIDParams(medicine));
+        SQLCore.execute(Queries.UPDATE_MEDICINE, MedicineParser.getMedicineIDParams(medicine));
     }
 
     /**
@@ -141,7 +126,7 @@ public class MySQLMedicine extends Core implements IMedicineDB {
     public void deleteMedicine(int medicineID) throws SQLException {
         LOGGER.info("Deleting medicine with ID: " + medicineID);
 
-        execute(Queries.DELETE_MEDICINE, medicineID);
+        SQLCore.execute(Queries.DELETE_MEDICINE, medicineID);
     }
 
     /**
@@ -152,7 +137,7 @@ public class MySQLMedicine extends Core implements IMedicineDB {
     private void createTable() throws SQLException {
         LOGGER.info("Creating table for the medicine DB if not exists... ");
 
-        execute(Queries.CREATE_TABLE);
+        SQLCore.execute(Queries.CREATE_TABLE);
     }
 
     /**
@@ -163,7 +148,7 @@ public class MySQLMedicine extends Core implements IMedicineDB {
     public void truncateTable() throws SQLException {
         LOGGER.info("Truncating table with medicines... ");
 
-        execute(Queries.TRUNCATE_TABLE);
+        SQLCore.execute(Queries.TRUNCATE_TABLE);
     }
 
     /**
@@ -179,15 +164,15 @@ public class MySQLMedicine extends Core implements IMedicineDB {
         ResultSet rs = null;
 
         switch (filter) {
-            case NAME -> rs = executeQuery(Queries.NAME_FILTER, param);
-            case FORM -> rs = executeQuery(Queries.FORM_FILTER, param);
-            case PRODUCER -> rs = executeQuery(Queries.PRODUCER_FILTER, param);
-            case EXPIRATION_DATE -> rs = executeQuery(Queries.EXPIRATION_DATE_FILTER, param);
-            case PRODUCTION_DATE -> rs = executeQuery(Queries.PRODUCTION_DATE_FILTER, param);
-            case COST -> rs = executeQuery(Queries.COST_FILTER, param);
-            case PRESCRIPTION_ONLY -> rs = executeQuery(Queries.PRESCRIPTION_ONLY_FILTER, param);
-            case ID -> rs = executeQuery(Queries.ID_FILTER, param);
-            case NONE -> rs = executeQuery(Queries.SELECT_MEDICINES);
+            case NAME -> rs = SQLCore.executeQuery(Queries.NAME_FILTER, param);
+            case FORM -> rs = SQLCore.executeQuery(Queries.FORM_FILTER, param);
+            case PRODUCER -> rs = SQLCore.executeQuery(Queries.PRODUCER_FILTER, param);
+            case EXPIRATION_DATE -> rs = SQLCore.executeQuery(Queries.EXPIRATION_DATE_FILTER, param);
+            case PRODUCTION_DATE -> rs = SQLCore.executeQuery(Queries.PRODUCTION_DATE_FILTER, param);
+            case COST -> rs = SQLCore.executeQuery(Queries.COST_FILTER, param);
+            case PRESCRIPTION_ONLY -> rs = SQLCore.executeQuery(Queries.PRESCRIPTION_ONLY_FILTER, param);
+            case ID -> rs = SQLCore.executeQuery(Queries.ID_FILTER, param);
+            case NONE -> rs = SQLCore.executeQuery(Queries.SELECT_MEDICINES);
         }
 
         return MedicineParser.loadMedicines(rs);

@@ -9,7 +9,7 @@ import java.sql.SQLException;
  * @version 1.3.0
  * @since 1.3.0
  */
-public interface IToolsDB extends ICore {
+public interface IToolsDB {
     /**
      * Creates database with provided name.
      *

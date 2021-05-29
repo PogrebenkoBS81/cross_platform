@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * @since 1.3.0
  */
 @SuppressWarnings("unused")
-public interface IMedicineDB extends ICore {
+public interface IMedicineDB {
     /**
      * Prepares all required tables in DB for work.
      *
